@@ -1,0 +1,5 @@
+*.code-workspace
+*.jl.*.cov
+*.jl.cov
+*.jl.mem
+/Manifest.toml
