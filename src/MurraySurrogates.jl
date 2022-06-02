@@ -3,11 +3,10 @@ module MurraySurrogates
 using PyCall
 using Conda
 
-Conda.pip_interop(true)
-Conda.pip("install", "spatiotemporal")
-
 const spatiotemporal = PyNULL()
 function __init__()
+    Conda.pip_interop(true)
+    Conda.pip("install", "spatiotemporal")
     copy!(spatiotemporal, pyimport_conda("spatiotemporal", "spatiotemporal"))
 end
 
