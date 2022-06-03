@@ -12,7 +12,7 @@ get_spectrum_ta(spectrum::AbstractVector)::Float64 = spatiotemporal.get_spectrum
 
 how_much_noise(spectrum::AbstractVector, target_ta::Number)::Float64 = spatiotemporal.how_much_noise(spectrum, target_ta)
 
-make_spectrum(tslen::Int, sample_rate::Number, alpha::Number, highpass_freq::Number)::AbstractVector = spatiotemporal.make_spectrum(tslen, sample_rate, alpha, highpass_freq)
+make_spectrum(tslen::Int, sample_rate::Number, alpha::Number, highpass_freq::Number)::AbstractVector = spatiotemporal.models.make_spectrum(tslen, sample_rate, alpha, highpass_freq)
 
 spatial_temporal_timeseries(cm::AbstractMatrix, spectra; dims=1)::AbstractMatrix = (LinearAlgebra.checksquare(cm); st = spatiotemporal.spatial_temporal_timeseries(cm, spectra); dims == 1 ? st' : st)
 

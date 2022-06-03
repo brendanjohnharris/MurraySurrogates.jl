@@ -14,6 +14,6 @@ end
 include("Surrogates.jl")
 include("Models.jl")
 include("Statistics.jl")
-
+include("util.jl")
 
 end
