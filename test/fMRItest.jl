@@ -22,7 +22,7 @@ X, nodes = movie2nodes(_X, 1:lastindex(_X, 1), 1:lastindex(_X, 2))
 𝐷 = distance_matrix_euclidean(nodes)
 𝛲 = cor(X, dims=1) # Correlation matrix
 discret = 2 # This is a parameter (the bin size) that you have to manually set.
-sub = 1:5:lastindex(𝐷, 1) # Computing SA is really slow, so we only use some of 𝛲 and 𝐷. More points would be more accurate.
+sub = 1:3:lastindex(𝐷, 1) # Computing SA is really slow, so we only use some of 𝛲 and 𝐷. More points would be more accurate.
 SA_λ, SA_∞ = spatial_autocorrelation(𝛲[sub, sub], 𝐷[sub, sub], discret)
 TA_Δ = temporal_autocorrelation(X)[sub] # I think this is a dubious quantity. It depends on the sampling period.
 
@@ -34,9 +34,9 @@ S = spatiotemporal_model_timeseries(𝐷[sub, sub]; SA_λ, SA_∞, TA_Δ, N=size
 
 # ? ---------- Compare the surrogate and the original time series ---------- ? #
 new_TA_Δ = temporal_autocorrelation(S)[:]
-TA_error = filter(!isnan, (new_TA_Δ - TA_Δ)) |> x->x.^2 |> mean |> sqrt
+TA_error = filter(!isnan, (new_TA_Δ - TA_Δ)) |> x->x.^2 |> mean |> sqrt # Around 0.02
 
 notnanS = hcat(filter(x->!all(isnan.(x)), eachcol(S)|>collect)...)
-SA_error = mean(cor(notnanS)) - SA_∞
+SA_error = mean(cor(notnanS)) - SA_∞ # Around 0.01
 
 S = nodes2movie(_X, S, nodes[sub, :])
