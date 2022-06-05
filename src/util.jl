@@ -1,3 +1,6 @@
+using ScatteredInterpolation
+using ProgressLogging
+
 export movie2nodes, nodes2movie
 
 function _movie2nodes(X::AbstractArray{T, 3} where T)
@@ -19,9 +22,17 @@ end
 
 function nodes2movie(X::AbstractArray, _X, nodes)
     Y = deepcopy(X)
+    # Assume the NaNs are consistent over the third dimension, and interpolate over the good channels
+    idxs = CartesianIndices(Y[:, :, 1])[.!isnan.(Y[:, :, 1])]
     Y[:] .= NaN
-    for (n, i) in nodes |> eachrow |> enumerate
-        Y[i..., :] .= _X[:, n]
+
+    threadlog = 0
+    @withprogress for (i, t) in enumerate(1:lastindex(Y, 3))
+        is = .!isnan.(_X[i, :])
+        itp = ScatteredInterpolation.interpolate(Multiquadratic(), nodes[is, :]', _X[i, is])
+        out = ScatteredInterpolation.evaluate(itp, hcat(collect.(Tuple.(idxs))...))
+        Y[idxs, t] .= out
+        (threadlog += 1)%1000 == 0 && @logprogress threadlog/size(Y, 3)
     end
     return Y
 end

@@ -32,11 +32,11 @@ highpass_freq = 0 # Don't apply a high-pass filter
 
 S = spatiotemporal_model_timeseries(𝐷[sub, sub]; SA_λ, SA_∞, TA_Δ, N=size(_X, 3), sample_rate, highpass_freq) # This is also really slow
 
+matwrite("test/fMRIsurrogate.mat", Dict("S"=>nodes2movie(_X, S, nodes[sub, :])))
+
 # ? ---------- Compare the surrogate and the original time series ---------- ? #
-new_TA_Δ = temporal_autocorrelation(S)[:]
-TA_error = filter(!isnan, (new_TA_Δ - TA_Δ)) |> x->x.^2 |> mean |> sqrt # Around 0.02
+# new_TA_Δ = temporal_autocorrelation(S)[:]
+# TA_error = filter(!isnan, (new_TA_Δ - TA_Δ)) |> x->x.^2 |> mean |> sqrt # Around 0.02
 
-notnanS = hcat(filter(x->!all(isnan.(x)), eachcol(S)|>collect)...)
-SA_error = mean(cor(notnanS)) - SA_∞ # Around 0.01
-
-S = nodes2movie(_X, S, nodes[sub, :])
+# notnanS = hcat(filter(x->!all(isnan.(x)), eachcol(S)|>collect)...)
+# SA_error = mean(cor(notnanS)) - SA_∞ # Around 0.01
