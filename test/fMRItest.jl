@@ -22,7 +22,7 @@ X, nodes = movie2nodes(_X, 1:lastindex(_X, 1), 1:lastindex(_X, 2))
 𝐷 = distance_matrix_euclidean(nodes)
 𝛲 = cor(X, dims=1) # Correlation matrix
 discret = 2 # This is a parameter (the bin size) that you have to manually set.
-sub = 1:3:lastindex(𝐷, 1) # Computing SA is really slow, so we only use some of 𝛲 and 𝐷. More points would be more accurate.
+sub = 1:2:lastindex(𝐷, 1) # Computing SA is really slow, so we only use some of 𝛲 and 𝐷. More points would be more accurate.
 SA_λ, SA_∞ = spatial_autocorrelation(𝛲[sub, sub], 𝐷[sub, sub], discret)
 TA_Δ = temporal_autocorrelation(X)[sub] # I think this is a dubious quantity. It depends on the sampling period.
 
@@ -32,7 +32,7 @@ highpass_freq = 0 # Don't apply a high-pass filter
 
 S = spatiotemporal_model_timeseries(𝐷[sub, sub]; SA_λ, SA_∞, TA_Δ, N=size(_X, 3), sample_rate, highpass_freq) # This is also really slow
 
-matwrite("test/fMRIsurrogate.mat", Dict("S"=>nodes2movie(_X, S, nodes[sub, :])))
+matwrite("test/fMRIsurrogate_2.mat", Dict("S"=>nodes2movie(_X, S, nodes[sub, :])))
 
 # ? ---------- Compare the surrogate and the original time series ---------- ? #
 # new_TA_Δ = temporal_autocorrelation(S)[:]
